@@ -1362,17 +1362,41 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
     .section-nav .tab:hover { background: #e6f4f1; }
     .section-nav .tab.active { background: linear-gradient(135deg, #114f55, #0e7c7b); color: #fff;
         border-color: #0a3236; box-shadow: 0 4px 14px rgba(14,124,123,.25); }
+    @keyframes secFadeIn { 0% { opacity: 0; transform: translateY(12px); }
+        100% { opacity: 1; transform: translateY(0); } }
+    @keyframes resFadeIn { 0% { opacity: 0; transform: translateY(10px) scale(.99); }
+        100% { opacity: 1; transform: translateY(0) scale(1); } }
+    .res-fade-in { animation: resFadeIn .4s cubic-bezier(.4,0,.2,1) both; }
+    .res-fade-in > * { animation: resFadeIn .45s cubic-bezier(.4,0,.2,1) both; }
+    .res-fade-in > *:nth-child(1) { animation-delay: .05s; }
+    .res-fade-in > *:nth-child(2) { animation-delay: .12s; }
+    .res-fade-in > *:nth-child(3) { animation-delay: .19s; }
+    .res-fade-in > *:nth-child(4) { animation-delay: .26s; }
+    .res-fade-in > *:nth-child(5) { animation-delay: .33s; }
     /* ===== أزرار طريقة المعالجة بالمعالج الجماعي (نفس شكل تبويب الاستعلام الفردي) ===== */
     .bulk-tabs { display: flex; width: 100%; gap: 10px; background: #f1f5fa;
         padding: 6px; border-radius: 14px; box-sizing: border-box; }
     .bulk-tab { flex: 1; padding: 13px 10px; text-align: center; background: transparent;
-        cursor: pointer; font-weight: 800; border-radius: 10px; transition: all .25s ease;
-        border: none; font-size: 14.5px; color: #6f837f; font-family: inherit; }
-    .bulk-tab:hover { color: #0e7c7b; }
-    .bulk-tab[aria-pressed="true"], .bulk-tab.active { background: linear-gradient(135deg, var(--brand), var(--brand-light));
-        color: white; box-shadow: 0 6px 16px rgba(0,70,132,.3); }
-    .bulk-tab-hint { text-align: center; font-size: 12.5px; color: #6f837f; margin-top: 8px; min-height: 18px; }
+        cursor: pointer; font-weight: 800; border-radius: 10px; transition: all .3s cubic-bezier(.4,0,.2,1);
+        border: none; font-size: 14.5px; color: #6f837f; font-family: inherit;
+        position: relative; transform: translateY(0); }
+    .bulk-tab:hover { color: #0e7c7b; transform: translateY(-1px); }
+    .bulk-tab:active { transform: scale(.97); }
+    .bulk-tab[aria-pressed="true"], .bulk-tab.active { background: linear-gradient(135deg, #0e5d5c, var(--brand));
+        color: #ffffff; box-shadow: 0 6px 16px rgba(14,124,123,.45);
+        animation: bulkTabActivate .35s cubic-bezier(.4,0,.2,1); font-weight: 900; }
+    @keyframes bulkTabActivate { 0% { transform: scale(.92); opacity: .6; }
+        60% { transform: scale(1.03); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+    .bulk-tab-hint { text-align: center; font-size: 12.5px; color: #6f837f; margin-top: 8px;
+        min-height: 18px; transition: opacity .25s ease; }
+    .tab { animation: tabActivate .35s cubic-bezier(.4,0,.2,1); }
+    @keyframes tabActivate { 0% { transform: scale(.92); opacity: .6; }
+        60% { transform: scale(1.03); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
     .bp-container { padding-bottom: 28px; }
+    /* ===== انتقال ناعم لأزرار الحساب والنتائج ===== */
+    .btn-primary, .bp-btn { transition: transform .2s ease, box-shadow .25s ease, background .25s ease; }
+    .btn-primary:hover, .bp-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(14,124,123,.28); }
+    .btn-primary:active, .bp-btn:active { transform: scale(.97); }
     /* ===== المعالج الجماعي (منقول من معالج الرواتب) ===== */
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1838,7 +1862,7 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
             document.getElementById('outNonTax').innerText = fmt(nonTaxable);
         }
 
-        document.getElementById('results').style.display = 'block';
+        var __res = document.getElementById('results'); __res.style.display = 'block'; __res.style.animation='none'; void __res.offsetWidth; __res.style.animation='resFadeIn .45s cubic-bezier(.4,0,.2,1) both';
         document.getElementById('statEffRate').innerText = res.effRate.toFixed(2) + '%';
         document.getElementById('outIns').innerText = fmt(res.insurance);
         document.getElementById('outInsOldAge').innerText = fmt(res.insDetail.oldAge);
@@ -1855,7 +1879,7 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
         document.getElementById('asmExemption').innerText = fmt(res.exemption);
         document.getElementById('outNonTax').innerText = fmt(res.gross - res.wage);
         document.getElementById('asmInsRate').innerText = (flags.isPensioner ? 1 : 11) + '%';
-        document.getElementById('exportRow').style.display = 'flex';
+        var __exp = document.getElementById('exportRow'); __exp.style.display = 'flex'; __exp.style.animation='none'; void __exp.offsetWidth; __exp.style.animation='resFadeIn .5s cubic-bezier(.4,0,.2,1) both';
         window.__lastResult = { res, mode };
 
         // التمرير لبطاقة النتيجة
@@ -2204,8 +2228,13 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
 function switchSection(sec, btn) {
     document.querySelectorAll('.section-nav .tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('secInquiry').style.display = sec === 'inquiry' ? 'block' : 'none';
-    document.getElementById('secBulk').style.display = sec === 'bulk' ? 'block' : 'none';
+    var secInq = document.getElementById('secInquiry'), secB = document.getElementById('secBulk');
+    if (sec === 'inquiry') { secB.style.display = 'none'; secInq.style.display = 'block'; }
+    else { secInq.style.display = 'none'; secB.style.display = 'block'; }
+    var target = sec === 'inquiry' ? secInq : secB;
+    target.style.animation = 'none';
+    void target.offsetWidth; // restart animation
+    target.style.animation = 'secFadeIn .45s cubic-bezier(.4,0,.2,1) both';
 }
 </script>
 <script>
@@ -2286,7 +2315,7 @@ function findWageForNet(targetNet, flags, nonTaxable) {
 
 /* ============ التعامل مع الملف ============ */
 function showStatus(id, msg, ok) {
-    const el = document.getElementById(id);
+    const el = document.getElementById(id); if (msg.includes('✓')) { el.style.animation='none'; void el.offsetWidth; el.style.animation='resFadeIn .4s cubic-bezier(.4,0,.2,1) both'; }
     el.className = 'status ' + (ok === null ? '' : ok ? 'ok' : 'err');
     el.innerText = msg;
 }
@@ -2414,7 +2443,7 @@ function renderTable() {
         '<td class="num">' + fmt(r.employerIns) + '</td>' +
         '<td class="num">' + fmt(insTotal(r.wage) + r.employerIns) + '</td>' +
         '</tr>').join('');
-    document.getElementById('tableWrap').style.display = 'block';
+    var __tw = document.getElementById('tableWrap'); __tw.style.display = 'block'; __tw.style.animation='none'; void __tw.offsetWidth; __tw.style.animation='resFadeIn .45s cubic-bezier(.4,0,.2,1) both';
 }
 
 /* مساعدات لحساب أساس وجمالي الربط التأميني */
