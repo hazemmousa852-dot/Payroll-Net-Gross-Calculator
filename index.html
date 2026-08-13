@@ -1362,7 +1362,125 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
     .section-nav .tab:hover { background: #e6f4f1; }
     .section-nav .tab.active { background: linear-gradient(135deg, #114f55, #0e7c7b); color: #fff;
         border-color: #0a3236; box-shadow: 0 4px 14px rgba(14,124,123,.25); }
+    /* ===== أزرار طريقة المعالجة بالمعالج الجماعي (نفس شكل تبويب الاستعلام الفردي) ===== */
+    .bulk-tabs { display: flex; width: 100%; gap: 10px; background: #f1f5fa;
+        padding: 6px; border-radius: 14px; box-sizing: border-box; }
+    .bulk-tab { flex: 1; padding: 13px 10px; text-align: center; background: transparent;
+        cursor: pointer; font-weight: 800; border-radius: 10px; transition: all .25s ease;
+        border: none; font-size: 14.5px; color: #6f837f; font-family: inherit; }
+    .bulk-tab:hover { color: #0e7c7b; }
+    .bulk-tab[aria-pressed="true"], .bulk-tab.active { background: linear-gradient(135deg, var(--brand), var(--brand-light));
+        color: white; box-shadow: 0 6px 16px rgba(0,70,132,.3); }
+    .bulk-tab-hint { text-align: center; font-size: 12.5px; color: #6f837f; margin-top: 8px; min-height: 18px; }
     .bp-container { padding-bottom: 28px; }
+    /* ===== المعالج الجماعي (منقول من معالج الرواتب) ===== */
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg); color: var(--text);
+            min-height: 100vh; padding: 20px 12px 40px; line-height: 1.5;
+        }
+        .bp-container {
+            max-width: 1080px; margin: auto; background: var(--card);
+            border-radius: 24px;
+            box-shadow: 0 25px 60px rgba(10,61,98,.18), 0 0 0 1px rgba(10,61,98,.04);
+            overflow: hidden; position: relative;
+        }
+        .header {
+            position: relative;
+            background: linear-gradient(135deg, var(--navy-deep) 0%, var(--brand) 55%, var(--brand-light) 100%);
+            color: white; padding: 26px 28px 22px; text-align: center;
+        }
+        .header img { height: 64px; border-radius: 12px; margin-bottom: 8px; }
+        .header h1 { font-size: 24px; font-weight: 900; margin-bottom: 4px; }
+        .header p { font-size: 13.5px; color: #cfe1de; max-width: 640px; margin: auto; }
+        .hero-bg { position: absolute; left: 12px; bottom: 4px; font-weight: 900; font-size: 46px; color: rgba(255,255,255,.06); user-select: none; }
+
+        .bp-content { padding: 24px 22px 8px; }
+        .step {
+            border: 1px solid var(--line); border-radius: 16px;
+            margin-bottom: 18px; overflow: hidden;
+        }
+        .step-head {
+            background: #f4f9f8; padding: 10px 18px; font-weight: 700;
+            display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid var(--line);
+        }
+        .step-num {
+            background: var(--brand); color: #fff; width: 24px; height: 24px;
+            border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 900;
+        }
+        .step-body { padding: 16px 18px 18px; }
+
+        .upload-zone {
+            border: 2px dashed #b8cac5; border-radius: 14px; padding: 26px;
+            text-align: center; cursor: pointer; transition: all .2s;
+        }
+        .upload-zone:hover, .upload-zone.drag { border-color: var(--brand); background: #f2f9f7; }
+        .upload-zone .icon { font-size: 34px; }
+        .upload-zone b { color: var(--brand); }
+        .upload-zone small { color: var(--muted); display: block; margin-top: 6px; font-size: 12.5px; }
+
+        .opts { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        .mode-chip {
+            flex: 1 1 260px; border: 2px solid var(--line); border-radius: 12px;
+            padding: 12px 16px; cursor: pointer; text-align: center; transition: all .2s;
+        }
+        .mode-chip input { display: none; }
+        .mode-chip .t { font-weight: 700; color: var(--brand); }
+        .mode-chip .d { font-size: 12px; color: var(--muted); }
+        .mode-chip.active { border-color: var(--brand); background: #e9f5f1; box-shadow: 0 4px 14px rgba(17,79,85,.14); }
+
+        .mini-field { display: inline-flex; align-items: center; gap: 8px; margin-left: 12px; }
+        .mini-field label { font-size: 13px; font-weight: 600; white-space: nowrap; }
+        .mini-field input[type="number"] {
+            width: 110px; padding: 8px 10px; border: 1px solid #c3ced9; border-radius: 8px;
+            font-family: inherit; font-size: 13px;
+        }
+        .check-inline { display: inline-flex; align-items: center; gap: 6px; margin-left: 14px; font-size: 13px; font-weight: 600; }
+
+        .btn {
+            font-family: inherit; font-size: 14px; font-weight: 700;
+            padding: 12px 26px; border-radius: 12px; cursor: pointer; border: none;
+            transition: all .2s;
+        }
+        .btn-primary { background: linear-gradient(135deg, var(--navy-deep), var(--brand)); color: #fff; }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(17,79,85,.28); }
+        .btn-primary:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+        .btn-success { background: var(--green); color: #fff; }
+        .btn-success:hover { background: #178a52; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th {
+            background: var(--brand); color: #fff; padding: 9px 8px; text-align: center;
+            font-weight: 700; font-size: 12.5px;
+        }
+        td { padding: 8px; text-align: center; border-bottom: 1px solid var(--line); }
+        tr:nth-child(even) td { background: #f6faf9; }
+        td.num { font-variant-numeric: tabular-nums; }
+        td.name { text-align: right; font-weight: 600; }
+        .hl-col { background: #eaf7ef !important; }
+        th.hl-col { background: var(--accent-dark); }
+        td.gross-col { background: #fdf3dc !important; }
+        th.gross-col { background: #b8860b !important; }
+
+        .status { text-align: center; margin: 10px 0; font-size: 13.5px; font-weight: 700; }
+        .status.ok { color: var(--green); }
+        .status.err { color: #c0392b; }
+        .actions { display: flex; justify-content: center; gap: 10px; margin: 16px 0 6px; flex-wrap: wrap; }
+
+        .table-wrap { max-height: 380px; overflow: auto; border: 1px solid var(--line); border-radius: 12px; }
+        .muted { color: var(--muted); font-size: 12.5px; }
+        .footer { text-align: center; padding: 14px; color: var(--muted); font-size: 12.5px; border-top: 1px solid var(--line); margin-top: 6px; }
+        .footer b { color: var(--brand); }
+
+        @media (max-width: 640px) {
+            .header h1 { font-size: 19px; }
+            table { font-size: 11.5px; }
+            th, td { padding: 6px 4px; }
+        }
     </style>
 </head>
 <body>
@@ -1512,18 +1630,11 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
         <div class="step">
             <div class="step-head"><span class="step-num">2</span> طريقة المعالجة</div>
             <div class="step-body">
-                <div class="opts">
-                    <label class="mode-chip active" id="chipG2N" onclick="bulkSetMode('G2N')">
-                        <input type="radio" name="mode" value="G2N" checked>
-                        <div class="t">من الإجمالي إلى الصافي</div>
-                        <div class="d">المرتب الموجود = الإجمالي (Gross) ← نحسب الصافي</div>
-                    </label>
-                    <label class="mode-chip" id="chipN2G" onclick="bulkSetMode('N2G')">
-                        <input type="radio" name="mode" value="N2G">
-                        <div class="t">من الصافي إلى الإجمالي</div>
-                        <div class="d">المرتب الموجود = الصافي (Net) ← نحسب الإجمالي المطلوب</div>
-                    </label>
+                <div class="opts bulk-tabs" role="tablist">
+                    <button type="button" class="bulk-tab active" id="chipG2N" role="tab" aria-pressed="true" onclick="bulkSetMode('G2N')">من الإجمالي إلى الصافي</button>
+                    <button type="button" class="bulk-tab" id="chipN2G" role="tab" aria-pressed="false" onclick="bulkSetMode('N2G')">من الصافي إلى الإجمالي</button>
                 </div>
+                <div class="bulk-tab-hint" id="modeHint">المرتب الموجود = الإجمالي (Gross) ← نحسب الصافي</div>
                 <div style="margin-top:14px;">
                     <label class="check-inline"><input type="checkbox" id="optDisabled"> يُطبق على الجميع: ذوي إعاقة (إعفاء 30,000 — م35 قانون 10/2018)</label>
                     <label class="check-inline"><input type="checkbox" id="optPensioner"> يُطبق على الجميع: فوق سن المعاش (تأمين 1%)</label>
@@ -2035,14 +2146,13 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
         var res = window.__lastResult.res;
         var mode = window.__lastResult.mode || 'G2N';
         var flags = readFlags();
-        var empNameEl = document.getElementById('empName');
-        var empName = empNameEl ? (empNameEl.value || '').trim() : '';
+        var empName = '—';
         var record = {
             sheet: 'salaries',
             action: 'append',
             data: {
                 التاريخ: new Date().toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' }),
-                الاسم: '—',
+                الاسم: empName || '—',
                 الوضع: mode === 'N2G' ? 'من الصافي إلى الإجمالي' : 'من الإجمالي إلى الصافي',
                 الأساسي: num(res.wage),
                 البدلات_الخاضعة: num(res.gross - res.wage),
@@ -2372,7 +2482,12 @@ function exportResults() {
     showStatus('procStatus', 'تم تصدير الملف: ' + origFileName + '_النتائج.xlsx ✓', true);
 }
 
-window.bulkSetMode = setMode;
+const __origSetMode = setMode;
+window.bulkSetMode = function(m){
+  __origSetMode(m);
+  var h = document.getElementById('modeHint');
+  if (h) h.innerText = m === 'G2N' ? 'المرتب الموجود = الإجمالي (Gross) ← نحسب الصافي' : 'المرتب الموجود = الصافي (Net) ← نحسب الإجمالي المطلوب';
+};
 window.bulkProcessAll = processAll;
 window.bulkExport = exportResults;
 window.bulkHandleFile = handleFile;
