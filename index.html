@@ -1564,6 +1564,7 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
         <div class="check-area">
             <label class="check-item"><input type="checkbox" id="isDisabled"> ذوي إعاقة — إعفاء شخصي 30,000 ج.م (م35 من قانون 10/2018)</label>
             <label class="check-item"><input type="checkbox" id="isPensioner"> فوق سن المعاش — تأمين 1%<div class="hint" style="font-weight:normal; color:var(--muted); margin-right:4px;">تقدير مبسط</div></label>
+            <label class="check-item"><input type="checkbox" id="isMartyrsFundExempt"> عمالة غير منتظمة أو باليومية — مستثناة من صندوق تكريم الشهداء</label>
         </div>
 
         <button class="calc" onclick="calculate()"><span class="icon">⚡</span> احسب راتبي الآن</button>
@@ -1599,6 +1600,7 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
                     <div class="ins-sub"><span>يُحسب على الأجر التأميني حتى السقف</span> <span id="outInsCap" class="pct">0</span></div>
                     <div class="res-row hl"><span>إجمالي الربط التأميني الشهري (العامل + صاحب العمل) 29.75%</span> <span id="outInsTotal" class="total-ins">0</span></div>
                     <div class="res-row hl"><span>ضريبة كسب العمل</span> <span id="outTax">0</span></div>
+                    <div class="res-row hl"><span>صندوق تكريم الشهداء (0.05% من الإجمالي)</span> <span id="outMartyrsFund">0</span></div>
                     <div class="res-row"><span>إجمالي الخصومات</span> <span id="outDed">0</span></div>
                 </div>
                 <div class="res-group">
@@ -1627,6 +1629,7 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
                     <tr><td>نسبة التأمينات (حصة العامل)</td><td id="asmInsRate">11%</td></tr>
                     <tr><td>سقف أجر الاشتراك التأميني</td><td id="asmInsCap">16,700 ج.م</td></tr>
                     <tr><td>الحد الأدنى لأجر الاشتراك التأميني</td><td id="asmInsFloor">2,700 ج.م</td></tr>
+                    <tr><td>صندوق تكريم الشهداء — 0.05% من إجمالي الراتب بما فيه البدلات (م8 قانون 16/2018 المعدلة بقانون 4/2021)</td><td id="asmMartyrsFund">0.05%</td></tr>
                     <tr><td>الشرائح الضريبية السنوية</td><td>0% حتى 40 ألف / 10% حتى 55 ألف / 15% حتى 70 ألف / 20% حتى 200 ألف / 22.5% حتى 400 ألف / 25% حتى 1.2 مليون / 27.5% فيما زاد</td></tr>
                 </table>
             </div>
@@ -1670,6 +1673,7 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
                 <div style="margin-top:14px;">
                     <label class="check-inline"><input type="checkbox" id="optDisabled"> يُطبق على الجميع: ذوي إعاقة (إعفاء 30,000 — م35 قانون 10/2018)</label>
                     <label class="check-inline"><input type="checkbox" id="optPensioner"> يُطبق على الجميع: فوق سن المعاش (تأمين 1%)</label>
+            <label class="check-inline"><input type="checkbox" id="optMartyrsFundExempt"> يُطبق على الجميع: عمالة غير منتظمة أو باليومية — مستثناة من صندوق تكريم الشهداء</label>
                     <div class="mini-field">
                         <label for="optNonTax">بدلات غير خاضعة (لكل موظف):</label>
                         <input type="number" id="optNonTax" min="0" value="0">
@@ -1719,6 +1723,8 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
        المصادر: الهيئة القومية للتأمين الاجتماعي (NOSI) وقانون 91/2005
        ============================================================ */
     const LEGAL = {
+    // م8 قانون 16/2018 المعدلة بقانون 4/2021: خمسة من عشرة آلاف.
+    martyrsFundRate: 0.0005,
         insuranceRate: {
             employee: 0.11,   // حصة العامل: 11% (بدل فوق سن المعاش)
             pensioner: 0.01,  // حصة العامل فوق سن المعاش: تأمين صحي مبسط 1%
@@ -1766,7 +1772,8 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
     function readFlags() {
         return {
             isDisabled: document.getElementById('isDisabled').checked,
-            isPensioner: document.getElementById('isPensioner').checked
+            isPensioner: document.getElementById('isPensioner').checked,
+            isMartyrsFundExempt: document.getElementById('isMartyrsFundExempt').checked
         };
     }
 
@@ -1818,10 +1825,12 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
 
         const mTax = tax / 12;
         const gross = wage + nonTaxable;
-        const net = wage - insurance - mTax + nonTaxable;
+        // يُخصم من إجمالي الراتب بما فيه البدلات، دون تخفيض وعاء ضريبة الدخل.
+        const martyrsFund = flags.isMartyrsFundExempt ? 0 : Math.max(0, gross) * LEGAL.martyrsFundRate;
+        const net = gross - insurance - mTax - martyrsFund;
         const effRateOfTaxable = wage > 0 ? (mTax * 12 / ((wage - insurance) * 12) * 100) : 0;
 
-        return { gross, wage, nonTaxable, insurance, insDetail, employerIns, mTax, tax, net, effRate: effRateOfTaxable, exemption };
+        return { gross, wage, nonTaxable, martyrsFund, insurance, insDetail, employerIns, mTax, tax, net, effRate: effRateOfTaxable, exemption };
     }
 
     function calculate() {
@@ -1855,7 +1864,7 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
             let low = 0, high = Math.max(targetWageNet * 2.5, 1000000), mid;
             for (let i = 0; i < 60; i++) {
                 mid = (low + high) / 2;
-                if (coreCalc(mid, 0, flags).net > targetWageNet) high = mid;
+                if (coreCalc(mid, nonTaxable, flags).net > target) high = mid;
                 else low = mid;
             }
             res = coreCalc(mid, nonTaxable, flags);
@@ -1879,7 +1888,9 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
         document.getElementById('outInsCap').innerText = 'الوعاء: ' + fmt(res.insDetail.base);
         document.getElementById('outInsTotal').innerText = fmt(res.insDetail.total + res.employerIns);
         document.getElementById('outTax').innerText = fmt(res.mTax);
-        document.getElementById('outDed').innerText = fmt(res.insurance + res.mTax);
+        document.getElementById('outMartyrsFund').innerText = fmt(res.martyrsFund);
+        document.getElementById('asmMartyrsFund').innerText = flags.isMartyrsFundExempt ? 'مستثنى: عمالة غير منتظمة أو باليومية' : '0.05%';
+        document.getElementById('outDed').innerText = fmt(res.insurance + res.mTax + res.martyrsFund);
         document.getElementById('outGross').innerText = fmt(res.gross);
         document.getElementById('outTaxAnnual').innerText = fmt(res.tax);
         document.getElementById('outEmployer').innerText = fmt(res.employerIns);
@@ -2075,7 +2086,8 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
         row('— المرض 1% (المادة 70)', f(res.insDetail.sickness), { small: true });
         row('إجمالي الربط التأميني الشهري (العامل + صاحب العمل 29.75%)', f(res.insDetail.total + res.employerIns), { hl: true });
         row('ضريبة كسب العمل (الشهرية)', f(res.mTax), { hl: true });
-        row('إجمالي الخصومات', f(res.insurance + res.mTax), { bold: true });
+        row('صندوق تكريم الشهداء (0.05% من إجمالي الراتب)', f(res.martyrsFund));
+        row('إجمالي الخصومات', f(res.insurance + res.mTax + res.martyrsFund), { bold: true });
         Y += 6;
 
         /* ======= الملخص ======= */
@@ -2130,6 +2142,8 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
             ['  Sickness 1% (Art.70)', res.insDetail.sickness, '', ''],
             ['Total monthly insurance link (employee + employer, 29.75%)', res.insDetail.total + res.employerIns, '', ''],
             ['Income tax (monthly)', res.mTax, '', ''],
+            ["Martyrs' Fund (0.05% of gross salary)", res.martyrsFund, '', ''],
+            ['Total monthly deductions', res.insurance + res.mTax + res.martyrsFund, '', ''],
             [],
             ['Summary', '', '', ''],
             ['NET SALARY (monthly)', res.net, '', ''],
@@ -2200,6 +2214,8 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
                 حصة_صاحب_العمل: num(res.employerIns),
                 الربط_التأميني_الإجمالي: num(res.insDetail.total + res.employerIns),
                 الضريبة_الشهرية: num(res.mTax),
+                صندوق_تكريم_الشهداء: num(res.martyrsFund),
+                إجمالي_الخصومات: num(res.insurance + res.mTax + res.martyrsFund),
                 الضريبة_السنوية: num(res.tax),
                 الإجمالي_الشهري: num(res.gross),
                 الصافي_الشهري: num(mode === 'N2G' ? res.net : res.net),
@@ -2249,6 +2265,8 @@ function switchSection(sec, btn) {
 (function(){
 /* ============ الثوابت القانونية (نفس حاسبة RisEdge 2026) ============ */
 const LEGAL = {
+    // م8 قانون 16/2018 المعدلة بقانون 4/2021: خمسة من عشرة آلاف.
+    martyrsFundRate: 0.0005,
     insuranceRate: { employee: 0.11, pensioner: 0.01, employer: 0.1875 },
     insuranceCap: 16700, insuranceFloor: 2700,
     personalExemption: 20000, disabilityExemptionMultiplier: 1.5,
@@ -2301,8 +2319,10 @@ function coreCalc(wage, nonTaxable, flags) {
     }
     const mTax = tax / 12;
     const gross = wage + nonTaxable;
-    const net = wage - insurance - mTax + nonTaxable;
-    return { gross, wage, nonTaxable, insurance, employerIns, mTax, tax, net, exemption };
+    // يُخصم من إجمالي الراتب بما فيه البدلات، دون تخفيض وعاء ضريبة الدخل.
+        const martyrsFund = flags.isMartyrsFundExempt ? 0 : Math.max(0, gross) * LEGAL.martyrsFundRate;
+        const net = gross - insurance - mTax - martyrsFund;
+    return { gross, wage, nonTaxable, martyrsFund, insurance, employerIns, mTax, tax, net, exemption };
 }
 
 function calcForWage(wage, flags, nonTaxable) {
@@ -2314,11 +2334,11 @@ function findWageForNet(targetNet, flags, nonTaxable) {
     let low = 0, high = Math.max(targetWageNet * 2.5, 1000000), mid, i;
     for (i = 0; i < 60; i++) {
         mid = (low + high) / 2;
-        if (coreCalc(mid, 0, flags).net > targetWageNet) high = mid; else low = mid;
+        if (coreCalc(mid, nonTaxable, flags).net > targetNet) high = mid; else low = mid;
     }
     mid = (low + high) / 2;
     const base = coreCalc(mid, nonTaxable, flags);
-    return { ...base, wage: mid, gross: mid + nonTaxable, net: base.net + nonTaxable };
+    return { ...base, wage: mid, gross: mid + nonTaxable, net: base.net };
 }
 
 /* ============ التعامل مع الملف ============ */
@@ -2386,7 +2406,8 @@ function detectCols(json) {
 function readFlags() {
     return {
         isDisabled: document.getElementById('optDisabled').checked,
-        isPensioner: document.getElementById('optPensioner').checked
+        isPensioner: document.getElementById('optPensioner').checked,
+            isMartyrsFundExempt: document.getElementById('optMartyrsFundExempt').checked
     };
 }
 
@@ -2434,6 +2455,8 @@ function renderTable() {
         '<th>الأجر التأميني</th>' +
         '<th>التأمينات 11%</th>' +
         '<th>الضريبة الشهرية</th>' +
+        '<th>صندوق تكريم الشهداء 0.05%</th>' +
+        '<th>إجمالي الخصومات</th>' +
         '<th class="' + colClass + '">' + colLabel + '</th>' +
         '<th>حصة صاحب العمل</th>' +
         '<th>الربط التأميني الإجمالي</th>' +
@@ -2447,6 +2470,8 @@ function renderTable() {
         '<td class="num">' + insBase(r.wage).toFixed(0) + '</td>' +
         '<td class="num">' + fmt(r.insurance) + '</td>' +
         '<td class="num">' + fmt(r.mTax) + '</td>' +
+        '<td class="num">' + fmt(r.martyrsFund) + '</td>' +
+        '<td class="num">' + fmt(r.insurance + r.mTax + r.martyrsFund) + '</td>' +
         '<td class="num ' + colClass + '"><b>' + fmt(r.result === 'net' ? r.net : r.gross) + '</b></td>' +
         '<td class="num">' + fmt(r.employerIns) + '</td>' +
         '<td class="num">' + fmt(insTotal(r.wage) + r.employerIns) + '</td>' +
@@ -2479,6 +2504,7 @@ function exportResults() {
     const resultHeaders = [
         mode === 'G2N' ? 'الصافي الشهري (النتيجة)' : 'الإجمالي المطلوب (النتيجة)',
         'الأجر التأميني', 'التأمينات حصة العامل', 'الضريبة الشهرية',
+        'صندوق تكريم الشهداء', 'إجمالي الخصومات',
         'حصة صاحب العمل', 'الربط التأميني الإجمالي',
         mode === 'G2N' ? 'الإجمالي الشهري' : 'الصافي الشهري',
         'تكلفة الشركة السنوية (تقريبية)'
@@ -2495,6 +2521,8 @@ function exportResults() {
                     case 'الأجر التأميني': return insBase(res.wage);
                     case 'التأمينات حصة العامل': return fmt(res.insurance);
                     case 'الضريبة الشهرية': return fmt(res.mTax);
+                    case 'صندوق تكريم الشهداء': return fmt(res.martyrsFund);
+                    case 'إجمالي الخصومات': return fmt(res.insurance + res.mTax + res.martyrsFund);
                     case 'حصة صاحب العمل': return fmt(res.employerIns);
                     case 'الربط التأميني الإجمالي': return fmt(insTotal(res.wage) + res.employerIns);
                     case (mode === 'G2N' ? 'الإجمالي الشهري' : 'الصافي الشهري'): return fmt(mode === 'G2N' ? res.gross : res.net);
@@ -2533,3 +2561,4 @@ window.bulkHandleFile = handleFile;
 <script defer src="https://hazemmousa852-dot.github.io/marjaak-alqanuni/hr-hub/tools-hub-link.js?v=1"></script>
 </body>
 </html>
+
