@@ -1547,7 +1547,7 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
         <div id="inputsG2N">
             <div class="section-title"><span class="bar"></span> بنود الأجر</div>
             <div class="grid">
-                <div class="field"><label for="basic">الأساسي<div class="hint">= الأجر التأميني</div></label><div class="input-wrap"><input type="number" id="basic" min="0" value="0"></div></div>
+                <div class="field"><label for="basic">الأساسي<div class="hint">= جزء من الأجر الخاضع</div></label><div class="input-wrap"><input type="number" id="basic" min="0" value="0"></div></div>
                 <div class="field"><label for="allowances">البدلات (خاضعة)<div class="hint"></div></label><div class="input-wrap"><input type="number" id="allowances" min="0" value="0"></div></div>
                 <div class="field"><label for="commissions">العمولات / الحوافز<div class="hint"></div></label><div class="input-wrap"><input type="number" id="commissions" min="0" value="0"></div></div>
                 <div class="field"><label for="nonTaxable">بدلات غير خاضعة<div class="hint">مبالغ مستوفية لشروط الاستبعاد التأميني والإعفاء الضريبي معًا؛ تحقق من سند كل بند، فالإعفاء من أحدهما لا يعني الإعفاء من الآخر</div></label><div class="input-wrap"><input type="number" id="nonTaxable" min="0" value="0"></div></div>
@@ -1632,7 +1632,7 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
                     <tr><td>سقف أجر الاشتراك التأميني</td><td id="asmInsCap">16,700 ج.م</td></tr>
                     <tr><td>الحد الأدنى لأجر الاشتراك التأميني</td><td id="asmInsFloor">2,700 ج.م</td></tr>
                     <tr><td>صندوق تكريم الشهداء — 0.05% من إجمالي الراتب بما فيه البدلات (م8 قانون 16/2018 المعدلة بقانون 4/2021)</td><td id="asmMartyrsFund">0.05%</td></tr>
-                    <tr><td>الشرائح الضريبية السنوية</td><td>0% حتى 40 ألف / 10% حتى 55 ألف / 15% حتى 70 ألف / 20% حتى 200 ألف / 22.5% حتى 400 ألف / 25% حتى 1.2 مليون / 27.5% فيما زاد</td></tr>
+                    <tr><td>الشرائح الأساسية — تُستبعد الشرائح الأدنى عند تجاوز حدود الدخل بالقانون 7/2024</td><td>الشرائح الأساسية حتى 600 ألف: 0% / 10% / 15% / 20% / 22.5% / 25%؛ ثم سحب الشرائح عند 600 و700 و800 و900 ألف و1.2 مليون، وأعلى سعر 27.5%. التقريب السنوي لأسفل لأقرب 10 جنيهات.</td></tr>
                 </table>
             </div>
         </div>
@@ -2063,7 +2063,7 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
         row('الإعفاء الشخصي السنوي (30,000 لذوي الإعاقة)', f(res.exemption));
         row('نسبة التأمينات (حصة العامل)', insRate);
         row('سقف / حد أدنى أجر الاشتراك', '16,700 / 2,700 ج.م');
-        row('الشرائح الضريبية السنوية', '0% حتى 40 ألف / 10% حتى 55 ألف / 15% حتى 70 ألف / 20% حتى 200 ألف / 22.5% حتى 400 ألف / 25% حتى 1.2 مليون / 27.5% فيما زاد', { small: true });
+        row('الشرائح الضريبية السنوية', 'الشرائح الأساسية حتى 600 ألف: 0% / 10% / 15% / 20% / 22.5% / 25%؛ ثم سحب الشرائح عند 600 و700 و800 و900 ألف و1.2 مليون، وأعلى سعر 27.5%. التقريب السنوي لأسفل لأقرب 10 جنيهات.', { small: true });
         Y += 8;
 
         /* ======= التذييل القانوني ======= */
@@ -2128,7 +2128,8 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
 
     /* ======= حفظ النتائج في Google Sheets عبر Apps Script ======= */
     /* تعليمات الإعداد: أنشئ Apps Script في ملف Google Sheet ولصق كود doPost المرفق في دليل الإعداد */
-    var SHEET_WEB_APP_URL = ''; /* ⬅️ الصق هنا رابط Web App من Apps Script بعد الإعداد */
+    var SHEET_WEB_APP_URL = '';
+    if (!SHEET_WEB_APP_URL) document.querySelectorAll('button[onclick*="saveToSheet"]').forEach(b=>{b.disabled=true;b.title='الحفظ الخارجي غير مهيأ؛ استخدم التصدير المحلي';}); /* ⬅️ الصق هنا رابط Web App من Apps Script بعد الإعداد */
 
     function showSheetStatus(msg, ok) {
         var el = document.getElementById('sheetStatus');
@@ -2489,7 +2490,6 @@ window.bulkHandleFile = handleFile;
 })();
 </script>
 <script defer src="https://hazemmousa852-dot.github.io/marjaak-alqanuni/hr-hub/tools-hub-link.js?v=2"></script>
-<script>document.querySelectorAll('button[onclick*="saveToSheet"]').forEach(b=>{b.disabled=true;b.title="الحفظ الخارجي غير مهيأ؛ استخدم التصدير المحلي";});</script>
 </body>
 </html>
 
