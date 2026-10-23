@@ -1515,8 +1515,9 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
 <meta property="og:image:height" content="630">
 <meta name="twitter:image" content="https://hazemmousa852-dot.github.io/marjaak-alqanuni/brand/og-image.png">
 <link rel="stylesheet" href="https://hazemmousa852-dot.github.io/marjaak-alqanuni/brand/tool-logo.css?v=20261022-identity" data-hm-tool-logo-style="1">
+<script src="payroll-rules.js"></script>
 </head>
-<body>
+<body><p role="note" style="padding:10px;text-align:center;font-size:13px">نموذج القطاع الخاص لشهر كامل بقواعد 2026. الحساب السنوي يفترض ثبات الأجر؛ تغير الأجر أو مدة الخدمة أو فروع التأمين يتطلب تسوية مستقلة. راجع سند غير الخاضع قبل الاعتماد.</p>
 
     <nav class="section-nav" aria-label="أقسام الحاسبة">
         <button class="tab active" onclick="switchSection('inquiry', this)">⚡ الاستعلام الفردي</button>
@@ -1549,7 +1550,7 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
                 <div class="field"><label for="basic">الأساسي<div class="hint">= الأجر التأميني</div></label><div class="input-wrap"><input type="number" id="basic" min="0" value="0"></div></div>
                 <div class="field"><label for="allowances">البدلات (خاضعة)<div class="hint"></div></label><div class="input-wrap"><input type="number" id="allowances" min="0" value="0"></div></div>
                 <div class="field"><label for="commissions">العمولات / الحوافز<div class="hint"></div></label><div class="input-wrap"><input type="number" id="commissions" min="0" value="0"></div></div>
-                <div class="field"><label for="nonTaxable">بدلات غير خاضعة<div class="hint">بدلات مستبعده تأمينياً بحد أقصى 30% من الأجر التأميني — مثل بدل طعام وإقامة — وتُستثنى من التأمين والضريبة</div></label><div class="input-wrap"><input type="number" id="nonTaxable" min="0" value="0"></div></div>
+                <div class="field"><label for="nonTaxable">بدلات غير خاضعة<div class="hint">مبالغ مستوفية لشروط الاستبعاد التأميني والإعفاء الضريبي معًا؛ تحقق من سند كل بند، فالإعفاء من أحدهما لا يعني الإعفاء من الآخر</div></label><div class="input-wrap"><input type="number" id="nonTaxable" min="0" value="0"></div></div>
             </div>
         </div>
 
@@ -1557,7 +1558,7 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
             <div class="section-title"><span class="bar"></span> المبلغ المستهدف</div>
             <div class="grid">
                 <div class="field"><label for="targetNet">صافي الراتب المطلوب (Net)<div class="hint"></div></label><div class="input-wrap"><input type="number" id="targetNet" min="0" placeholder="مثال: 15000"></div></div>
-                <div class="field"><label for="nonTaxableN2G">بدلات غير خاضعة<div class="hint">بدلات مستبعده تأمينياً بحد أقصى 30% من الأجر التأميني — تُضاف للصافي بعد الحساب</div></label><div class="input-wrap"><input type="number" id="nonTaxableN2G" min="0" value="0"></div></div>
+                <div class="field"><label for="nonTaxableN2G">بدلات غير خاضعة<div class="hint">مبالغ مستوفية لشروط الاستبعاد التأميني والإعفاء الضريبي معًا — تُضاف للصافي بعد التحقق من سندها</div></label><div class="input-wrap"><input type="number" id="nonTaxableN2G" min="0" value="0"></div></div>
             </div>
         </div>
 
@@ -1594,7 +1595,7 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
                 </div>
                 <div class="res-group">
                     <div class="res-group-title">الخصومات الشهرية</div>
-                    <div class="res-row hl"><span>التأمينات الاجتماعية (حصة العامل) 11%</span> <span id="outIns">0</span></div>
+                    <div class="res-row hl"><span>التأمينات الاجتماعية (حصة العامل حسب الحالة)</span> <span id="outIns">0</span></div>
                     <div class="ins-sub"><span>— الشيخوخة والعجز والوفاة 9% (م19)</span> <span id="outInsOldAge">0</span></div>
                     <div class="ins-sub"><span>— المكافأة 1% (م36)</span> <span id="outInsBonus">0</span></div>
                     <div class="ins-sub"><span>— المرض 1% (م70)</span> <span id="outInsSick">0</span></div>
@@ -1785,56 +1786,19 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
      * - flags: { isDisabled, isPensioner }
      */
     function coreCalc(wage, nonTaxable, flags) {
-        // 1) التأمينات: تُحسب على الوعاء الخاضع فقط مع السقف الأعلى
-        const insCap = Math.min(LEGAL.insuranceCap, Math.max(LEGAL.insuranceFloor, wage));
-        const insRate = flags.isPensioner ? LEGAL.insuranceRate.pensioner : LEGAL.insuranceRate.employee;
-        const insurance = insCap * insRate;
-
-        // 1.2) تفصيل الربط التأميني الشهري للعامل (قانون 148/2019 — ساري حتى 31/12/2026)
-        //      على الأجر التأميني insCap. الإجمالي المخصوم من المرتب 11% مقسم كالتالي:
-        //      الشيخوخة والعجز والوفاة 9% (م19) + المكافأة 1% (م36) + المرض 1% (م70).
-        //      (فرع إصابات العمل 1.5% يتحمله صاحب العمل ولا يُخصم من أجر العامل.)
-        //      ملاحظة: اعتباراً من 1/1/2027 يزيد بند الشيخوخة والعجز والوفاة 1% مناصفة
-        //      فيصبح 10% للعامل و12.5% لصاحب العمل — م19 من القانون 148/2019.
-        const insDetail = {
-            base: insCap,
-            oldAge: flags.isPensioner ? 0 : insCap * 0.09,    // الشيخوخة والعجز والوفاة 9% (م19)
-            bonus: flags.isPensioner ? 0 : insCap * 0.01,     // المكافأة 1% (م36)
-            sickness: insCap * 0.01,                          // المرض 1% (م70) — فوق سن المعاش يظل 1%
-            total: flags.isPensioner ? insCap * 0.01 : insCap * 0.11
-        };
-
-        // 1.1) حصة صاحب العمل من التأمينات — تُحسب على نفس الأجر التأميني (حتى السقف)
-        const employerIns = insCap * LEGAL.insuranceRate.employer;
-
-        // 2) الإعفاء الشخصي السنوي
-        let exemption = LEGAL.personalExemption;
-        if (flags.isDisabled) exemption *= LEGAL.disabilityExemptionMultiplier;
-
-        // 3) الضريبة السنوية على الوعاء الخاضع بعد خصم التأمينات ثم الإعفاء
-        let taxable = (wage - insurance) * 12 - exemption;
-        if (taxable < 0) taxable = 0;
-
-        let tax = 0;
-        let temp = taxable;
-        for (const b of LEGAL.brackets) {
-            if (temp <= 0) break;
-            const amt = Math.min(temp, b.limit);
-            tax += amt * b.rate;
-            temp -= amt;
-        }
-
-        const mTax = tax / 12;
-        const gross = wage + nonTaxable;
-        // يُخصم من إجمالي الراتب بما فيه البدلات، دون تخفيض وعاء ضريبة الدخل.
-        const martyrsFund = flags.isMartyrsFundExempt ? 0 : Math.max(0, gross) * LEGAL.martyrsFundRate;
-        const net = gross - insurance - mTax - martyrsFund;
-        const effRateOfTaxable = wage > 0 ? (mTax * 12 / ((wage - insurance) * 12) * 100) : 0;
-
-        return { gross, wage, nonTaxable, martyrsFund, insurance, insDetail, employerIns, mTax, tax, net, effRate: effRateOfTaxable, exemption };
+        return window.PayrollRules.calculate(wage, nonTaxable, flags, LEGAL);
     }
 
+    function payrollError(message) {
+        document.getElementById('results').style.display = 'none';
+        let el = document.getElementById('payrollError');
+        if (!el) { el = document.createElement('p'); el.id = 'payrollError'; el.setAttribute('role','alert'); document.getElementById('results').before(el); }
+        el.textContent = message; el.style.color = '#b42318';
+    }
     function calculate() {
+        const error = document.getElementById('payrollError'); if(error) error.textContent = '';
+        const ids = mode === 'G2N' ? ['basic','allowances','commissions','nonTaxable'] : ['targetNet','nonTaxableN2G'];
+        if(ids.some(id => { const v=document.getElementById(id).value; return v !== '' && (!Number.isFinite(Number(v)) || Number(v)<0); })) return payrollError('أدخل مبالغ صحيحة غير سالبة.');
         const flags = readFlags();
         let res;
 
@@ -1845,7 +1809,9 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
             const nonTaxable = Math.max(0, parseFloat(document.getElementById('nonTaxable').value) || 0);
             const wage = basic + allowances + commissions;
 
+            if(wage <= 0) return payrollError("الأجر الخاضع يجب أن يكون أكبر من صفر.");
             res = coreCalc(wage, nonTaxable, flags);
+            if(res.net < 0) return payrollError("الأجر لا يغطي الاستقطاعات وفق فروض الشهر الكامل؛ راجع الأجر ومدة وفروع الاشتراك.");
 
             document.getElementById('finalLabel').innerText = 'صافي الراتب';
             document.getElementById('kStat1').innerText = 'صافي شهري';
@@ -1858,17 +1824,9 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
         } else {
             const target = Math.max(0, parseFloat(document.getElementById('targetNet').value) || 0);
             const nonTaxable = Math.max(0, parseFloat(document.getElementById('nonTaxableN2G').value) || 0);
-            // الهدف من الحساب الثنائي هو الوعاء الخاضع الذي يحقق الصافي (بعد خصم غير الخاضع)
-            const targetWageNet = target - nonTaxable;
-
-            // البحث الثنائي لإيجاد الوعاء الخاضع (وحدوده الأعلى تغطي أعلى شريحة ضريبية)
-            let low = 0, high = Math.max(targetWageNet * 2.5, 1000000), mid;
-            for (let i = 0; i < 60; i++) {
-                mid = (low + high) / 2;
-                if (coreCalc(mid, nonTaxable, flags).net > target) high = mid;
-                else low = mid;
-            }
-            res = coreCalc(mid, nonTaxable, flags);
+            if (!Number.isFinite(target) || target <= 0 || nonTaxable >= target) return payrollError('الصافي المستهدف يجب أن يكون موجبًا وأكبر من غير الخاضع.');
+            try { res = window.PayrollRules.solve(target, nonTaxable, flags, LEGAL); } catch (e) { return payrollError(e.message); }
+            const mid = res.wage;
 
             document.getElementById('finalLabel').innerText = 'الإجمالي المطلوب (خاضع)';
             document.getElementById('kStat1').innerText = 'الإجمالي الخاضع';
@@ -2081,7 +2039,7 @@ window.__VBOLD = 'AAEAAAAPAIAAAwBwR0RFRqgcpLkAAW4MAAABqkdQT1PQlk4oAAFvuAAAVJJHU1
 
         /* ======= الخصومات الشهرية ======= */
         section('الخصومات الشهرية');
-        row('التأمينات الاجتماعية — حصة العامل (11%)', f(res.insurance), { hl: true });
+        row('التأمينات الاجتماعية — حصة العامل حسب الحالة', f(res.insurance), { hl: true });
         row('— الشيخوخة والعجز والوفاة 9% (المادة 19)', f(res.insDetail.oldAge), { small: true });
         row('— المكافأة 1% (المادة 36)', f(res.insDetail.bonus), { small: true });
         row('— المرض 1% (المادة 70)', f(res.insDetail.sickness), { small: true });
@@ -2296,50 +2254,15 @@ function setMode(m) {
 
 /* coreCalc: نفس محرك الحاسبة الأصلية */
 function coreCalc(wage, nonTaxable, flags) {
-    const insCap = Math.min(LEGAL.insuranceCap, Math.max(LEGAL.insuranceFloor, wage));
-    const insRate = flags.isPensioner ? LEGAL.insuranceRate.pensioner : LEGAL.insuranceRate.employee;
-    const insurance = insCap * insRate;
-    const insDetail = {
-        base: insCap,
-        oldAge: flags.isPensioner ? 0 : insCap * 0.09,
-        bonus: flags.isPensioner ? 0 : insCap * 0.01,
-        sickness: insCap * 0.01,
-        total: flags.isPensioner ? insCap * 0.01 : insCap * 0.11
-    };
-    const employerIns = insCap * LEGAL.insuranceRate.employer;
-    let exemption = LEGAL.personalExemption;
-    if (flags.isDisabled) exemption *= LEGAL.disabilityExemptionMultiplier;
-    let taxable = (wage - insurance) * 12 - exemption;
-    if (taxable < 0) taxable = 0;
-    let tax = 0, temp = taxable;
-    for (const b of LEGAL.brackets) {
-        if (temp <= 0) break;
-        const amt = Math.min(temp, b.limit);
-        tax += amt * b.rate;
-        temp -= amt;
+        return window.PayrollRules.calculate(wage, nonTaxable, flags, LEGAL);
     }
-    const mTax = tax / 12;
-    const gross = wage + nonTaxable;
-    // يُخصم من إجمالي الراتب بما فيه البدلات، دون تخفيض وعاء ضريبة الدخل.
-        const martyrsFund = flags.isMartyrsFundExempt ? 0 : Math.max(0, gross) * LEGAL.martyrsFundRate;
-        const net = gross - insurance - mTax - martyrsFund;
-    return { gross, wage, nonTaxable, martyrsFund, insurance, employerIns, mTax, tax, net, exemption };
-}
 
 function calcForWage(wage, flags, nonTaxable) {
     return coreCalc(wage, nonTaxable, flags);
 }
 
 function findWageForNet(targetNet, flags, nonTaxable) {
-    const targetWageNet = targetNet - nonTaxable;
-    let low = 0, high = Math.max(targetWageNet * 2.5, 1000000), mid, i;
-    for (i = 0; i < 60; i++) {
-        mid = (low + high) / 2;
-        if (coreCalc(mid, nonTaxable, flags).net > targetNet) high = mid; else low = mid;
-    }
-    mid = (low + high) / 2;
-    const base = coreCalc(mid, nonTaxable, flags);
-    return { ...base, wage: mid, gross: mid + nonTaxable, net: base.net };
+    return window.PayrollRules.solve(targetNet, nonTaxable, flags, LEGAL);
 }
 
 /* ============ التعامل مع الملف ============ */
@@ -2418,9 +2341,13 @@ function processAll() {
     if (!rows.length) { showStatus('procStatus', 'ارفع الملف أولاً', false); return; }
     const flags = readFlags();
     batchFlags = flags;
-    const nonTaxable = Math.max(0, parseFloat(document.getElementById('optNonTax').value) || 0);
+    const nonTaxInput = Number(document.getElementById('optNonTax').value || 0);
+    if(!Number.isFinite(nonTaxInput)||nonTaxInput<0) { showStatus('procStatus','غير الخاضع يجب أن يكون مبلغًا صحيحًا غير سالب.',false); return; }
+    const nonTaxable = nonTaxInput;
 
-    results = rows.map((r, i) => {
+    const invalid = rows.findIndex(r => !Number.isFinite(Number(r[window.colMap.sal])) || Number(r[window.colMap.sal]) <= 0);
+    if(invalid >= 0) { results = []; document.getElementById('resBody').textContent=''; document.getElementById('btnExport').disabled = true; showStatus('procStatus', 'قيمة الأجر غير صحيحة في صف Excel رقم ' + (invalid + 2), false); return; }
+    try { results = rows.map((r, i) => {
         const salVal = Number(r[window.colMap.sal]);
         const wageIn = isNaN(salVal) ? 0 : salVal;
         let res;
@@ -2431,12 +2358,14 @@ function processAll() {
             res = findWageForNet(wageIn, flags, nonTaxable);
             res.result = 'gross'; // النتيجة: الإجمالي المطلوب
         }
+        if(res.net < 0) throw new Error('الأجر لا يغطي الاستقطاعات في صف Excel رقم ' + (i + 2));
         res.code = window.colMap.code ? (r[window.colMap.code] ?? '') : '';
         res.name = window.colMap.name ? (r[window.colMap.name] ?? '') : '';
         res.idx = i;
         return res;
     });
 
+    } catch(e) { results=[]; document.getElementById('resBody').textContent=''; document.getElementById('btnExport').disabled=true; showStatus('procStatus',e.message,false); return; }
     renderTable();
     document.getElementById('btnExport').disabled = false;
     showStatus('procStatus', 'تمت معالجة ' + results.length + ' موظف ✓', true);
@@ -2560,6 +2489,7 @@ window.bulkHandleFile = handleFile;
 })();
 </script>
 <script defer src="https://hazemmousa852-dot.github.io/marjaak-alqanuni/hr-hub/tools-hub-link.js?v=2"></script>
+<script>document.querySelectorAll('button[onclick*="saveToSheet"]').forEach(b=>{b.disabled=true;b.title="الحفظ الخارجي غير مهيأ؛ استخدم التصدير المحلي";});</script>
 </body>
 </html>
 
