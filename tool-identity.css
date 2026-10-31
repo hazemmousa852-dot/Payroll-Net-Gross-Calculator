@@ -1,0 +1,105 @@
+/* HM shared tool identity v4. Presentation only; all selectors are screen-scoped.
+Canonical: marjaak-alqanuni/brand/tool-identity.css. Local copies keep each tool independent.
+Keep calculations, exports, document selectors and print styles outside this file. */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
+@media screen {
+ body[data-hm-ui] {
+  --hm-navy:#071827; --hm-teal:#16746e; --hm-teal-hover:#105c57; --hm-gold:#c8a365;
+  --hm-canvas:#f3f6f7; --hm-ink:#193344; --hm-muted:#536b79; --hm-line:#dce5e8; --hm-soft:#edf6f4;
+  font-family:Cairo,Tahoma,Arial,sans-serif;
+ }
+ body[data-hm-ui] :is(button,a,input,select,textarea,summary):focus-visible {outline:3px solid var(--hm-gold);outline-offset:3px}
+ body[data-hm-ui] input:is([type=checkbox],[type=radio]) {accent-color:var(--hm-teal)}
+ body[data-hm-ui] #hm-tools-brand-chip {display:none!important}
+ /* These tools already contain their own logo and title. Retain the hub footer. */
+ body[data-hm-ui] #hm-tools-hub-bar {display:none!important}
+ body[data-hm-ui] [data-hm-tools-offset-header] {top:0!important}
+ body[data-hm-ui] .hm-tool-logo {object-fit:contain;border-radius:50%;border-color:var(--hm-gold)!important;background:var(--hm-navy)!important}
+ body[data-hm-ui] {--shadow:0 12px 32px rgba(7,24,39,.08)}
+ /* Net / gross calculator: map only this tool's own token names. */
+ body[data-hm-ui=payroll] {
+  --navy:var(--hm-navy);--navy-deep:var(--hm-navy);--brand:var(--hm-teal);--brand-light:#23867f;
+  --accent:var(--hm-teal);--accent-dark:var(--hm-teal-hover);--gold:var(--hm-gold);
+  --bg:var(--hm-canvas);--card:#fff;--text:var(--hm-ink);--muted:var(--hm-muted);--line:var(--hm-line);
+ }
+ body[data-hm-ui=payroll] .header {background:var(--hm-navy);border-bottom:3px solid var(--hm-gold)}
+ body[data-hm-ui=payroll] .brand-name span {color:#8bd5c9}
+ body[data-hm-ui=payroll] :is(.btn-primary,.tab[aria-pressed=true],.bulk-tab.active,.bulk-tab[aria-pressed=true]) {background:var(--hm-teal);color:#fff}
+ body[data-hm-ui=payroll] .usp .chip:not(.gold) {background:var(--hm-teal)}
+ /* Annual leave calculator: replace lavender surfaces without moving the form. */
+ body[data-hm-ui=leave] {background:var(--hm-canvas);color:var(--hm-ink)}
+ body[data-hm-ui=leave] .container {background:#fff;border-color:var(--hm-line);box-shadow:var(--shadow)}
+ body[data-hm-ui=leave] :is(h1,h2,label,.detail-item .value,.reason-box .value,.experience-summary,.accrual-table td) {color:var(--hm-ink)}
+ body[data-hm-ui=leave] :is(label .hint,.detail-item .label,.reason-box .label,.promo-footer) {color:var(--hm-muted)}
+ body[data-hm-ui=leave] .promo-badge {background:var(--hm-navy);color:#fff;border-color:var(--hm-gold)}
+ body[data-hm-ui=leave] :is(.promo-badge .highlight,.result-badge,.detail-item .value.highlight,.promo-footer .brand) {color:var(--hm-teal)}
+ body[data-hm-ui=leave] .promo-badge .highlight {color:#e4c892!important}
+ body[data-hm-ui=leave] :is(input[type=text],input[type=number],input[type=date],.mode-option) {background:#fbfcfc;border-color:var(--hm-line);color:var(--hm-ink)}
+ body[data-hm-ui=leave] input:focus {background:#fff;border-color:var(--hm-teal);box-shadow:0 0 0 3px #16746e20}
+ body[data-hm-ui=leave] input::placeholder {color:var(--hm-muted)}
+ body[data-hm-ui=leave] :is(.btn-calc,.btn-add) {background:var(--hm-teal);color:#fff;box-shadow:0 5px 14px #16746e20}
+ body[data-hm-ui=leave] :is(.experience-row,.experience-summary,.result-container,.reason-box,.mode-option:has(input:checked),.result-badge,.accrual-table .table-header,.accrual-table .year-header td,.accrual-table tr.total-row td) {background:var(--hm-soft);border-color:var(--hm-line);color:var(--hm-ink)}
+ body[data-hm-ui=leave] :is(.detail-item,.accrual-table) {background:#fff;border-color:var(--hm-line)}
+ body[data-hm-ui=leave] .accrual-table .badge-tier {background:var(--hm-soft);color:var(--hm-teal)}
+ /* Search tools share the same native structure. Penalty colors stay semantic. */
+ body[data-hm-ui=search] {--bg:var(--hm-canvas);--card:#fff;--ink:var(--hm-ink);--muted:var(--hm-muted);--accent:var(--hm-teal);--accent-soft:var(--hm-soft);--accent-dark:var(--hm-teal-hover);--line:var(--hm-line)}
+ body[data-hm-ui=search] header {background:var(--hm-navy);border-bottom:3px solid var(--hm-gold);border-radius:14px;padding:20px 16px;color:#fff}
+ body[data-hm-ui=search] header h1 {color:#fff}
+ body[data-hm-ui=search] header p {color:#c5d6df}
+ /* Attendance and attendance-to-payroll share the same dashboard structure. */
+ body[data-hm-ui=attendance] {--black:var(--hm-navy);--black-2:#0b2438;--black-3:#153348;--gold:var(--hm-gold);--gold-light:#e4c892;--gold-pale:#fcf6e9;--ink:var(--hm-ink);--muted:var(--hm-muted);--line:var(--hm-line);--surface:#fff;--canvas:var(--hm-canvas)}
+ body[data-hm-ui=attendance] .sidebar {background:var(--hm-navy)}
+ body[data-hm-ui=attendance] .hero-card {background:linear-gradient(120deg,var(--hm-navy),#103646)}
+ body[data-hm-ui=attendance] .topbar {background:var(--hm-navy);color:#fff;border-bottom:2px solid var(--hm-gold)}
+ body[data-hm-ui=attendance] .topbar .breadcrumb {color:#c5d6df}
+ body[data-hm-ui=attendance] :is(.primary-button,.gold-button) {background:var(--hm-teal);color:#fff;box-shadow:0 5px 14px #16746e20}
+ body[data-hm-ui=attendance] :is(.drop-zone,.split-actions) {background:var(--hm-soft);border-color:var(--hm-line)}
+ /* Insurance PDF generator: UI only; original PDF forms and coordinates remain intact. */
+ body[data-hm-ui=forms],body[data-hm-ui=audit] {
+  --background:var(--hm-canvas);--foreground:var(--hm-ink);--card:#fff;--card-foreground:var(--hm-ink);
+  --popover:#fff;--popover-foreground:var(--hm-ink);--primary:var(--hm-teal);--primary-foreground:#fff;
+  --secondary:#edf3f4;--secondary-foreground:var(--hm-ink);--muted:#edf3f4;--muted-foreground:var(--hm-muted);
+  --accent:var(--hm-soft);--accent-foreground:var(--hm-teal-hover);--border:var(--hm-line);--input:#ccdadd;--ring:var(--hm-teal);
+  --font-sans:Cairo,Tahoma,sans-serif;--font-display:Cairo,Tahoma,sans-serif;
+ }
+ body[data-hm-ui=forms] .topbar {background:var(--hm-navy);color:#fff;border-bottom:2px solid var(--hm-gold)}
+ body[data-hm-ui=forms] :is(.brand-caption,.connection-state) {color:#c5d6df}
+ body[data-hm-ui=forms] .sidebar {background:var(--hm-navy)}
+ body[data-hm-ui=forms] .topbar-template-tab-active {background:var(--hm-teal);border-color:var(--hm-teal);color:#fff;box-shadow:0 5px 14px #16746e20}
+ body[data-hm-ui=forms] :is(.nav-item-active,.template-option-active) {background:#173b48;box-shadow:inset 3px 0 var(--hm-gold)}
+ body[data-hm-ui=forms] :is(.button-primary,.download-button,.export-button) {background:var(--hm-teal);border-color:var(--hm-teal);color:#fff}
+ body[data-hm-ui=audit] {--audit-navy:var(--hm-navy);--audit-gold:var(--hm-gold);--audit-paper:var(--hm-canvas);--audit-muted:var(--hm-muted)}
+ /* CV editor only; .cv-document and page pagination retain their original CSS. */
+ body[data-hm-ui=cv] {background:var(--hm-canvas);color:var(--hm-ink)}
+ body[data-hm-ui=cv] .toolbar {background:var(--hm-navy);border-bottom-color:var(--hm-gold)}
+ body[data-hm-ui=cv] .editor h2 {color:var(--hm-teal)}
+ body[data-hm-ui=cv] :is(.primary,.step-nav button[aria-current=step],.mobile-tabs button[aria-pressed=true]) {background:var(--hm-teal)!important;color:#fff}
+ body[data-hm-ui=cv] .step-nav button[aria-current=step] b {color:var(--hm-teal)}
+ /* Educational games retain their dark learning environment. */
+ body[data-hm-ui=law-game] {--bg1:var(--hm-navy);--bg2:#0b2438;--bg3:var(--hm-navy);--primary:var(--hm-teal);--primary2:#23867f;--accent:var(--hm-gold);--card:#0b2438;--muted:#b7c9d7;--ink:#eef4f8;background:var(--hm-navy)}
+ body[data-hm-ui=law-game] .topbar {border-bottom-color:var(--hm-gold)}
+ body[data-hm-ui=law-game] .primary {background:var(--hm-teal);color:#fff;box-shadow:0 5px 18px #16746e30}
+ body[data-hm-ui=law-game] .gradient-text {background-image:linear-gradient(90deg,#8bd5c9,#e4c892)}
+ body[data-hm-ui=law-game] .mini-stat .num {color:#8bd5c9}
+ body[data-hm-ui=law-game] .mini-stat .txt {color:#b7c9d7}
+ body[data-hm-ui=law-game] :is(.law-link,.law-link:visited) {color:#8bd5c9}
+ body[data-hm-ui=law-game] .card {background:linear-gradient(145deg,#0b2438,#0a1e30)}
+ body[data-hm-ui=law-game] .mode-option.selected {border-color:#8bd5c9;background:#16746e26;box-shadow:0 0 0 3px #16746e14}
+ body[data-hm-ui=insurance-game] {--bg:var(--hm-navy);--panel:#0b2438;--panel-2:#153348;--text:#eef4f8;--muted:#b7c9d7;--mint:#8bd5c9;--gold:#e4c892;--line:#ffffff24;--font:Cairo,Tahoma,sans-serif}
+ body[data-hm-ui=insurance-game] .site-header {background:var(--hm-navy);border-bottom-color:var(--hm-gold)}
+ body[data-hm-ui=insurance-game] .primary {background:var(--hm-teal);color:#fff}
+ body[data-hm-ui=insurance-game] .mission-panel {background:linear-gradient(145deg,#153b46,#0b2438);border-color:#8bd5c940}
+ body[data-hm-ui=insurance-game] .level-card {background:#0b2438}
+ /* Legal reference keeps its search and navigation structure. */
+ body[data-hm-ui=legal] {--ink:var(--hm-ink);--muted:var(--hm-muted);--paper:var(--hm-canvas);--green:var(--hm-teal);--green-2:var(--hm-teal-hover);--mint:var(--hm-soft);--gold:var(--hm-gold);--line:var(--hm-line)}
+ body[data-hm-ui=legal] :is(.site-header,.hero) {background:var(--hm-navy)}
+ body[data-hm-ui=legal] .site-header {border-bottom:2px solid var(--hm-gold)}
+
+ body[data-hm-ui=forms] :is(h1,h2,h3) {color:var(--hm-ink)}
+ body[data-hm-ui=forms] :is(h1 em,.section-overline,.eyebrow,.callout-number,.records-title svg) {color:var(--hm-teal)}
+ body[data-hm-ui=forms] :is(.eyebrow-line,.workflow-tab-active) {background:var(--hm-teal)}
+ body[data-hm-ui=forms] :is(.manual-callout,.manual-stage-banner) {background:var(--hm-soft);border-right-color:var(--hm-gold)}
+ body[data-hm-ui=forms] .intro-visual {border-right-color:var(--hm-gold)}
+ body[data-hm-ui=forms] .button-primary:hover {background:var(--hm-teal-hover);border-color:var(--hm-teal-hover)}
+ body[data-hm-ui=forms] .topbar .brand-name {color:#fff}
+}
